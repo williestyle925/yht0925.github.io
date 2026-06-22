@@ -953,6 +953,18 @@ html[data-theme="light"] .cover-visual img{ mix-blend-mode:normal; border-radius
 .rb-figblock .rb-body{ grid-area:text; }
 .rb-media .compare-grid{ grid-template-columns:1fr; }
 .rb-media .compare-figure{ margin:0.4rem 0 0; }
+.dgm{ border:1px solid var(--line-soft); border-radius:6px; overflow:hidden; background:var(--bg); margin:0.4rem 0 0; }
+.dgm svg{ display:block; width:100%; height:auto; }
+.dgm .panel{ fill:var(--paper2); stroke:var(--line); }
+.dgm .panel2{ fill:var(--paper); stroke:var(--line-soft); }
+.dgm .chip-acc{ fill:var(--accent); fill-opacity:0.15; stroke:var(--accent); }
+.dgm .chip-gold{ fill:var(--gold); fill-opacity:0.18; stroke:var(--gold); }
+.dgm .f-acc{ fill:var(--accent); } .dgm .f-gold{ fill:var(--gold); } .dgm .f-mut{ fill:var(--muted); }
+.dgm .s-ln{ stroke:var(--line); fill:none; } .dgm .s-mut{ stroke:var(--muted); fill:none; }
+.dgm .s-acc{ stroke:var(--accent); fill:none; } .dgm .s-gold{ stroke:var(--gold); fill:none; }
+.dgm text{ font-family:var(--mono); fill:var(--muted); }
+.dgm .t-lab{ fill:var(--gold); font-size:8.5px; letter-spacing:0.05em; }
+.dgm .t-sub{ font-size:7px; } .dgm .t-acc{ fill:var(--accent); } .dgm .t-gold{ fill:var(--gold); }
 @media (max-width:680px){ .research-block{ padding:1.6rem 1.4rem; border-radius:10px; grid-template-columns:1fr; row-gap:0.5rem; } }
 #page-research section{ padding-top:0.8rem; padding-bottom:0.8rem; }
 #page-research section:first-of-type{ padding-top:0.4rem; }
@@ -1198,10 +1210,54 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
 </section>
 
 <section id="engineering">
-  <div class="container prose research-block">
-    <div class="rb-head">
+  <div class="container prose research-block rb-figblock">
+    <div class="rb-title">
     <div class="card-num" data-i18n="res04.k">02 · Perturb &amp; Visualize in situ</div>
     <h2 data-i18n="res04.h2">Perturbing and visualizing tissue in situ</h2>
+    </div>
+    <div class="rb-media">
+    <figure class="dgm"><svg viewBox="0 0 300 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CRISPR-HOT knock-in for visualisation and control">
+<text class="t-lab" x="16" y="20">01 · ENDOGENOUS LOCUS</text>
+<line class="s-ln" x1="22" y1="58" x2="278" y2="58" stroke-width="1.1"/>
+<line class="s-ln" x1="22" y1="68" x2="278" y2="68" stroke-width="1.1"/>
+<g class="s-mut" stroke-width="0.7" opacity="0.55">
+<line x1="36" y1="58" x2="36" y2="68"/><line x1="50" y1="58" x2="50" y2="68"/><line x1="64" y1="58" x2="64" y2="68"/>
+<line x1="236" y1="58" x2="236" y2="68"/><line x1="250" y1="58" x2="250" y2="68"/><line x1="264" y1="58" x2="264" y2="68"/></g>
+<rect class="panel2" x="116" y="51" width="68" height="24" rx="3" stroke-width="1"/>
+<text class="t-sub" x="150" y="66" text-anchor="middle">target gene</text>
+<ellipse class="chip-acc" cx="150" cy="33" rx="23" ry="12" stroke-width="1.2"/>
+<text class="t-acc t-sub" x="150" y="36" text-anchor="middle">Cas9</text>
+<path class="s-acc" d="M150 45 v6" stroke-width="1"/>
+<path class="s-acc" d="M145 51 l5 6 M155 51 l-5 6" stroke-width="1.4"/>
+<path class="f-mut" d="M150 84 l5 9 h-10 z"/>
+<text class="t-sub" x="162" y="93">CRISPR-HOT</text>
+<text class="t-lab" x="16" y="120">02 · IN-FRAME KNOCK-IN</text>
+<rect class="panel2" x="30" y="132" width="66" height="24" rx="2" stroke-width="1"/>
+<text class="t-sub" x="63" y="147" text-anchor="middle" style="font-size:6.5px">endog. exon</text>
+<rect class="chip-gold" x="96" y="132" width="78" height="24" stroke-width="1"/>
+<text class="t-gold t-sub" x="135" y="147" text-anchor="middle" style="font-size:6.5px">mNeonGreen</text>
+<rect class="chip-acc" x="174" y="132" width="92" height="24" stroke-width="1"/>
+<text class="t-acc t-sub" x="220" y="144" text-anchor="middle" style="font-size:6.5px">FKBP12 degron</text>
+<text class="t-sub" x="220" y="152" text-anchor="middle" style="font-size:5.5px">conditional</text>
+<path class="f-mut" d="M150 168 l5 9 h-10 z"/>
+<text class="t-lab" x="16" y="204">03 · VISUALISE + CONTROL</text>
+<rect class="panel" x="22" y="216" width="118" height="96" rx="5" stroke-width="1"/>
+<text class="t-gold t-sub" x="81" y="231" text-anchor="middle" style="letter-spacing:0.08em">VISUALISE</text>
+<circle class="s-ln" cx="81" cy="268" r="27" stroke-width="1"/>
+<circle class="f-gold" cx="81" cy="268" r="11" opacity="0.3"/>
+<circle class="f-gold" cx="81" cy="268" r="6.5"/>
+<text class="t-sub" x="81" y="304" text-anchor="middle" style="font-size:6.5px">live reporter</text>
+<rect class="panel" x="160" y="216" width="118" height="96" rx="5" stroke-width="1"/>
+<text class="t-acc t-sub" x="219" y="231" text-anchor="middle" style="letter-spacing:0.08em">CONTROL</text>
+<circle class="chip-acc" cx="196" cy="262" r="11" stroke-width="1.2"/>
+<path class="s-gold" d="M228 255 l6 3.5 v7 l-6 3.5 l-6 -3.5 v-7 z" stroke-width="1.1"/>
+<text class="t-sub" x="231" y="278" text-anchor="middle" style="font-size:5.5px">+ ligand</text>
+<path class="s-mut" d="M210 277 q4 9 1 16" stroke-width="0.9"/>
+<g opacity="0.5"><circle class="s-acc" cx="208" cy="298" r="8" stroke-width="1" stroke-dasharray="2.5 2.5"/>
+<path class="s-mut" d="M203 293 l10 10 M213 293 l-10 10" stroke-width="0.8"/></g>
+<text class="t-sub" x="234" y="300" text-anchor="middle" style="font-size:5.5px">acute</text>
+<text class="t-sub" x="234" y="308" text-anchor="middle" style="font-size:5.5px">degrade</text>
+</svg></figure>
     </div>
     <div class="rb-body">
     <p data-i18n="res04.p1">Mechanistic claims require perturbation. I have generated more than twenty <strong>CRISPR-Cas9</strong> knockouts and overexpression lines in organoids, coupled to functional readouts. Beyond loss- and gain-of-function, I apply <em>CRISPR-HOT</em> (homology-independent organoid transgenesis) to knock in fluorescent reporters, epitope tags, and degron cassettes — including mutant FKBP for conditional protein destabilization — directly at endogenous loci.</p>
@@ -1234,10 +1290,48 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
 </section>
 
 <section id="image-analysis">
-  <div class="container prose research-block">
-    <div class="rb-head">
+  <div class="container prose research-block rb-figblock">
+    <div class="rb-title">
     <div class="card-num" data-i18n="res03.k">04 · BVO Quantification</div>
     <h2 data-i18n="res03.h2">Quantitative readouts from confocal image stacks</h2>
+    </div>
+    <div class="rb-media">
+    <figure class="dgm"><svg viewBox="0 0 300 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Quantitative image-analysis pipeline">
+<text class="t-lab" x="16" y="20">01 · CONFOCAL Z-STACK</text>
+<rect class="panel2" x="44" y="40" width="138" height="40" rx="2" stroke-width="0.8" opacity="0.4"/>
+<rect class="panel2" x="38" y="46" width="138" height="40" rx="2" stroke-width="0.8" opacity="0.7"/>
+<rect class="panel" x="32" y="52" width="138" height="40" rx="2" stroke-width="1"/>
+<path class="s-acc" d="M44 84 C62 64 78 80 94 72 C110 64 122 76 138 70 C150 66 156 60 164 62" stroke-width="1.4"/>
+<circle class="f-acc" cx="94" cy="72" r="2.2"/><circle class="f-acc" cx="138" cy="70" r="2.2"/>
+<path class="s-mut" d="M196 54 v36 m-3 -5 l3 5 l3 -5" stroke-width="0.8"/>
+<text class="t-sub" x="204" y="74">z</text>
+<path class="f-mut" d="M150 100 l5 9 h-10 z"/>
+<text class="t-lab" x="16" y="128">02 · SKELETONISE &#8594; GRAPH</text>
+<path class="s-acc" d="M48 196 C66 172 84 188 100 180 C118 172 132 186 150 178 C162 172 172 164 182 168" stroke-width="7" stroke-linecap="round" opacity="0.2"/>
+<g class="s-mut" stroke-width="1">
+<line x1="48" y1="196" x2="100" y2="180"/><line x1="100" y1="180" x2="150" y2="178"/>
+<line x1="150" y1="178" x2="182" y2="168"/><line x1="100" y1="180" x2="108" y2="206"/>
+<line x1="150" y1="178" x2="156" y2="204"/></g>
+<g stroke-width="1.2">
+<circle class="chip-acc" cx="48" cy="196" r="4.5"/><circle class="chip-acc" cx="100" cy="180" r="4.5"/>
+<circle class="chip-acc" cx="150" cy="178" r="4.5"/><circle class="chip-acc" cx="182" cy="168" r="4.5"/>
+<circle class="chip-acc" cx="108" cy="206" r="4.5"/><circle class="chip-acc" cx="156" cy="204" r="4.5"/></g>
+<text class="t-sub" x="200" y="180">branch graph</text>
+<text class="t-gold t-sub" x="200" y="191">networkx</text>
+<path class="f-mut" d="M150 224 l5 9 h-10 z"/>
+<text class="t-lab" x="16" y="252">03 · QUANTITATIVE READOUTS</text>
+<rect class="panel" x="16" y="262" width="116" height="44" rx="4" stroke-width="1"/>
+<text class="t-gold t-sub" x="74" y="277" text-anchor="middle" style="font-size:6px">AVG DIAMETER</text>
+<text class="t-sub" x="74" y="291" text-anchor="middle" style="fill:var(--ink2)">(maxFeret +</text>
+<text class="t-sub" x="74" y="301" text-anchor="middle" style="fill:var(--ink2)">minFeret) / 2</text>
+<rect class="panel" x="140" y="262" width="50" height="44" rx="4" stroke-width="1"/>
+<text class="t-gold t-sub" x="165" y="281" text-anchor="middle" style="font-size:6px">BRANCH</text>
+<text class="t-sub" x="165" y="295" text-anchor="middle" style="fill:var(--ink2)">topology</text>
+<rect class="panel" x="198" y="262" width="86" height="44" rx="4" stroke-width="1"/>
+<text class="t-sub" x="241" y="276" text-anchor="middle" style="font-size:5.5px">RADIAL INTENSITY</text>
+<path class="s-acc" d="M206 300 C214 300 218 284 226 284 C234 284 238 298 248 297 C258 296 266 288 278 290" stroke-width="1.1"/>
+<path class="s-gold" d="M206 296 C216 296 222 289 232 290 C244 291 252 296 262 293 C270 291 274 292 278 293" stroke-width="1.1"/>
+</svg></figure>
     </div>
     <div class="rb-body">
     <p data-i18n="res03.p1">The utility of a model depends on the quality of the readouts it produces. This work develops <strong>automated image-analysis pipelines</strong> in Python and ImageJ macros to reduce subjectivity in organoid phenotyping. For vascular organoids, this includes segmentation, skeletonization, and graph-based network analysis (via <em>networkx</em>) to quantify branch topology, together with morphometric descriptors such as average diameter derived from Feret measurements.</p>
