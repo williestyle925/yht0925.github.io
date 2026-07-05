@@ -1010,6 +1010,29 @@ html[data-theme="light"] .cover-visual img{ mix-blend-mode:normal; border-radius
 .approach-num{ font-family:var(--mono); font-weight:700; font-size:0.6rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); margin-bottom:0.6rem; }
 .approach-card h3{ font-family:var(--serif); font-size:1.32rem; line-height:1.24; color:var(--ink); margin:0 0 0.5rem; letter-spacing:-0.005em; }
 .approach-card p{ font-size:0.92rem; line-height:1.56; color:var(--ink2); margin:0; }
+
+/* ── approach-figure hover choreography ── */
+.approach-figure svg{ transform-origin:center center; transition:transform .5s cubic-bezier(.22,.61,.36,1); }
+.approach-card:hover .approach-figure svg{ transform:scale(1.045); }
+/* pipeline arrows flow left→right on hover */
+.approach-figure svg line[marker-end]{ transition:stroke-dashoffset .3s; }
+.approach-card:hover .approach-figure svg line[marker-end]{ stroke-dasharray:5 4; animation:apFlow .6s linear infinite; }
+@keyframes apFlow{ to{ stroke-dashoffset:-18; } }
+/* accent-coloured organoid clusters breathe */
+.approach-figure svg circle[stroke="#d97757"],
+.approach-figure svg ellipse[stroke="#d97757"]{ transform-box:fill-box; transform-origin:center; }
+.approach-card:hover .approach-figure svg circle[stroke="#d97757"],
+.approach-card:hover .approach-figure svg ellipse[stroke="#d97757"]{ animation:apBreathe 1.6s ease-in-out infinite; }
+@keyframes apBreathe{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.08); } }
+/* italic caption lifts in */
+.approach-figure svg text[font-style="italic"]{ transition:transform .45s ease, opacity .45s ease; }
+.approach-card:hover .approach-figure svg text[font-style="italic"]{ transform:translateY(-2px); }
+@media (prefers-reduced-motion: reduce){
+  .approach-card:hover .approach-figure svg{ transform:none; }
+  .approach-card:hover .approach-figure svg line[marker-end]{ animation:none; stroke-dasharray:none; }
+  .approach-card:hover .approach-figure svg circle[stroke="#d97757"],
+  .approach-card:hover .approach-figure svg ellipse[stroke="#d97757"]{ animation:none; }
+}
 @media (max-width:720px){ .approach-grid{ grid-template-columns:1fr; } }
 .page.active{ display:block; animation:pageIn .45s ease; }
 @keyframes pageIn{ from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
