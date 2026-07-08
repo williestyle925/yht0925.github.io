@@ -1162,6 +1162,8 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
 #page-about .pub-fund{ margin-top:1.1rem; }
 /* Home page — tighten feed spacing (hero left intact; caption is absolute + cover has overflow:hidden) */
 #page-home .cover-inner{ padding-bottom:2.3rem; }
+#page-home .cover-visual{ flex-direction:column; }
+#page-home .cover-cap{ position:static; transform:none; left:auto; width:auto; max-width:100%; margin-top:0.9rem; } /* caption in normal flow, directly below the image (inside the figure) -> never clipped by .cover overflow:hidden, never jammed at the hero bottom edge, in any language/width */
 #page-home #pubmed-section{ padding-top:1.5rem; padding-bottom:1.6rem; }
 #page-home #pubmed-section .section-rule{ margin-bottom:1.3rem; }
 /* Approach page — compressed vertical rhythm */
