@@ -2238,23 +2238,29 @@ em, i { font-style: normal; }  /* site-wide: no italics */
 
   /* Entry greeting shows briefly then reverts to the self-intro; the intro is what shows on click. */
   const bubble = document.getElementById('vpBubble');
-  var greetTimer=null;
+  var greetTimer=null, revertTimer=null;
   function isZh(){ return document.documentElement.lang==='zh-Hant'; }
   function greetMsg(){ return isZh() ? '嗨，你好嗎？' : 'Hi, how are you doing?'; }
   function introMsg(){ return isZh() ? '我是宇翔，有任何問題歡迎聯繫我！' : "I'm Yu-Hsiang, feel free to reach out with any questions!"; }
-  function restoreIntro(){ bubble.innerHTML = introMsg(); }
-  function cancelGreet(){ if(greetTimer){ clearTimeout(greetTimer); greetTimer=null; } restoreIntro(); }
+  function cancelGreet(){ if(greetTimer){ clearTimeout(greetTimer); greetTimer=null; } }
+  /* hide first; swap text back to the intro only AFTER the 0.2s fade-out, so the next line never flashes */
+  function hideBubble(){ widget.classList.remove('is-speaking'); if(revertTimer) clearTimeout(revertTimer); revertTimer=setTimeout(function(){ bubble.innerHTML=introMsg(); revertTimer=null; }, 320); }
+  function showIntro(){ if(revertTimer){ clearTimeout(revertTimer); revertTimer=null; } bubble.innerHTML=introMsg(); widget.classList.add('is-speaking'); }
   setTimeout(function(){
     if(widget.classList.contains('is-speaking')) return;   // visitor already opened it
     bubble.innerHTML = greetMsg();          // brief entry greeting
     widget.classList.add('is-speaking');
-    greetTimer=setTimeout(function(){ widget.classList.remove('is-speaking'); greetTimer=null; restoreIntro(); }, 10000);
+    greetTimer=setTimeout(function(){ greetTimer=null; hideBubble(); }, 10000);
   }, 600);
 
-  stage.addEventListener('click', ()=>{ var g=(greetTimer!==null); cancelGreet(); pipette(); if(g){ widget.classList.add('is-speaking'); } else { speak(); } });
-  stage.addEventListener('keydown',(e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); var g=(greetTimer!==null); cancelGreet(); pipette(); if(g){ widget.classList.add('is-speaking'); } else { speak(); } } });
-  document.addEventListener('click',(e)=>{ if(!e.target.closest('#vpWidget')){ cancelGreet(); widget.classList.remove('is-speaking'); } });
-  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape'){ cancelGreet(); widget.classList.remove('is-speaking'); } });
+  function onActivate(){ var greeting=(greetTimer!==null); cancelGreet(); pipette();
+    if(greeting){ showIntro(); }                                        // greeting up -> switch to intro
+    else if(widget.classList.contains('is-speaking')){ hideBubble(); }  // intro up -> hide
+    else { showIntro(); } }                                             // nothing up -> show intro
+  stage.addEventListener('click', onActivate);
+  stage.addEventListener('keydown',(e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); onActivate(); } });
+  document.addEventListener('click',(e)=>{ if(!e.target.closest('#vpWidget') && widget.classList.contains('is-speaking')){ cancelGreet(); hideBubble(); } });
+  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape' && widget.classList.contains('is-speaking')){ cancelGreet(); hideBubble(); } });
 })();
 </script>
 <!-- V-PERSONA floating widget: end -->
