@@ -1182,6 +1182,73 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
 #page-contact .section-rule{ margin-bottom:1.35rem; }
 @media (prefers-reduced-motion: reduce){ .page.active{ animation:none; } }
 
+
+/* ============ V-Persona floating widget (embedded from vpersona.html) ============ */
+:root{
+  --vp-ink:#0b1622; --vp-surface:#12283c; --vp-surface-2:#0f2130;
+  --vp-line:#1f3d55; --vp-text:#e7f2f6; --vp-muted:#8fb0c2;
+  --vp-cyan:#37e1c6; --vp-magenta:#f26db0;
+  --vp-skin:#e7bd9c; --vp-skin-sh:#c99873;
+  --vp-hair:#171c22; --vp-hair-hi:#2f3a45; --vp-glass:#232a31;
+  --vp-coat:#f2f6f8; --vp-coat-sh:#cdd9df;
+  --vp-tool:#dfe6ea; --vp-tool-sh:#b7c3ca;
+}
+html[data-theme="light"]{
+  --vp-ink:#eef3f5; --vp-surface:#ffffff; --vp-surface-2:#f3f7f9;
+  --vp-line:#d6e2e8; --vp-text:#122430; --vp-muted:#5c7686;
+  --vp-cyan:#0fae95; --vp-magenta:#d24d92;
+  --vp-hair:#33475a; --vp-coat:#ffffff; --vp-coat-sh:#dfe8ec;
+  --vp-glass:#2a323a; --vp-hair-hi:#52697e;
+  --vp-tool:#eef2f4; --vp-tool-sh:#c2ccd1;
+}
+.vp-widget{--_bob:0px;--_tilt:0deg;width:min(320px,82vw);
+  font-family:"Inter","Noto Sans TC",system-ui,sans-serif;user-select:none}
+.vp-stage{position:relative;width:100%;aspect-ratio:1/1;cursor:pointer}
+.vp-stage svg{width:100%;height:100%;overflow:visible;display:block}
+#vp-figure{transform:translateY(var(--_bob))}
+#vp-head{transform-box:fill-box;transform-origin:50% 90%;transform:rotate(var(--_tilt));
+  transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.vp-lid{transform-box:fill-box;transform-origin:50% 0%;transform:scaleY(0);transition:transform .09s ease}
+.vp-widget.is-blinking .vp-lid{transform:scaleY(1)}
+.vp-pupil{transition:transform .12s ease-out}
+#vp-brows{transform-box:fill-box;transform-origin:50% 100%;transform:translateY(0);transition:transform .3s ease}
+.vp-widget.is-hover #vp-brows{transform:translateY(-3px)}
+.vp-net{opacity:.55}
+.vp-net .vp-node{animation:vp-pulse 3.4s ease-in-out infinite}
+.vp-net .vp-node:nth-child(2){animation-delay:.5s}
+.vp-net .vp-node:nth-child(3){animation-delay:1.1s}
+.vp-net .vp-node:nth-child(4){animation-delay:1.7s}
+.vp-net .vp-node:nth-child(5){animation-delay:2.3s}
+@keyframes vp-pulse{0%,100%{opacity:.25;r:3.2px}50%{opacity:.9;r:5px}}
+#vp-arm{transform-box:fill-box;transform-origin:60% 8%}
+.vp-widget.is-pipetting #vp-arm{animation:vp-pip .85s ease-in-out 3}
+@keyframes vp-pip{0%,100%{transform:translateY(0) rotate(0deg)}46%{transform:translateY(9px) rotate(-2deg)}}
+#vp-plunger{transform-box:fill-box;transform-origin:50% 100%}
+.vp-widget.is-pipetting #vp-plunger{animation:vp-press .85s ease-in-out 3}
+@keyframes vp-press{0%,100%{transform:translateY(0)}42%,56%{transform:translateY(3.4px)}}
+#vp-drop{opacity:0;transform-box:fill-box;transform-origin:50% 0%}
+.vp-widget.is-pipetting #vp-drop{animation:vp-drip .85s ease-in 3}
+@keyframes vp-drip{0%,56%{opacity:0;transform:translateY(0)}64%{opacity:1;transform:translateY(1px)}
+  100%{opacity:0;transform:translateY(13px) scaleY(1.15)}}
+.vp-hint{margin-top:5px;text-align:center;font-size:10.5px;color:var(--vp-muted);
+  letter-spacing:.02em;transition:opacity .4s ease}
+.vp-widget.is-touched .vp-hint{opacity:0}
+.vp-stage:focus-visible{outline:2px solid var(--vp-cyan);outline-offset:3px;border-radius:14px}
+@media (prefers-reduced-motion:reduce){
+  #vp-figure{transform:none!important}
+  .vp-net .vp-node{animation:none}
+  #vp-head,#vp-brows,.vp-lid,.vp-pupil{transition:none}
+  .vp-widget.is-pipetting #vp-arm,
+  .vp-widget.is-pipetting #vp-plunger,
+  .vp-widget.is-pipetting #vp-drop{animation:none}
+}
+/* fixed placement: always bottom-right; only the avatar catches clicks (rest passes through) */
+#vpWidget{ position:fixed; right:16px; bottom:14px; width:clamp(112px,14vw,150px);
+  z-index:1200; pointer-events:none; }
+#vpWidget .vp-stage{ pointer-events:auto; filter:drop-shadow(0 8px 18px rgba(0,0,0,.26)); }
+@media (max-width:600px){ #vpWidget{ width:96px; right:10px; bottom:10px; } }
+/* ============ end V-Persona widget CSS ============ */
+
 </style>
 </head>
 <body>
@@ -1231,8 +1298,6 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
   </div>
 </section>
 
-
-
 <section id="pubmed-section">
   <div class="container">
     <div class="section-rule"><span class="section-label" data-i18n="feed.label">Latest Organoid Research</span></div>
@@ -1242,8 +1307,6 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
     <div id="pubmed-feed"></div>
   </div>
 </section>
-
-
 
 </div>
 <div class="page" id="page-research">
@@ -2025,5 +2088,153 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
   }).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
 })();
 </script>
+
+<!-- V-PERSONA floating widget: begin -->
+<div class="vp-widget" id="vpWidget" aria-label="Virtual persona of YuHsiang Teng">
+  <div class="vp-stage" id="vpStage" tabindex="0" role="button" aria-label="Tap to pipette / 點擊打液">
+    <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <radialGradient id="vpGlow" cx="50%" cy="42%" r="60%">
+          <stop offset="0%" stop-color="var(--vp-cyan)" stop-opacity=".16"/>
+          <stop offset="100%" stop-color="var(--vp-cyan)" stop-opacity="0"/>
+        </radialGradient>
+        <clipPath id="vpFaceClip"><path d="M150 78c34 0 56 26 56 62 0 40-26 66-56 66s-56-26-56-66c0-36 22-62 56-62Z"/></clipPath>
+      </defs>
+
+      <g id="vp-figure">
+        <!-- white lab coat -->
+        <path d="M86 300 C86 246 116 226 150 226 C184 226 214 246 214 300 Z" fill="var(--vp-coat)"/>
+        <path d="M150 228 L136 248 L150 258 L164 248 Z" fill="var(--vp-surface-2)"/>
+        <path d="M150 230 L118 242 L150 300 Z" fill="var(--vp-coat-sh)" opacity=".28"/>
+        <path d="M150 230 L182 242 L150 300 Z" fill="var(--vp-coat-sh)" opacity=".16"/>
+        <path d="M118 242 L150 230 L182 242" fill="none" stroke="var(--vp-coat-sh)" stroke-width="1.6" stroke-opacity=".7"/>
+        <path d="M150 258 L150 300" stroke="var(--vp-coat-sh)" stroke-width="1.4" stroke-opacity=".55"/>
+        <circle cx="150" cy="280" r="2.1" fill="var(--vp-coat-sh)"/>
+        <circle cx="150" cy="296" r="2.1" fill="var(--vp-coat-sh)"/>
+        <!-- breast pocket -->
+        <rect x="112" y="268" width="26" height="20" rx="2" fill="none" stroke="var(--vp-coat-sh)" stroke-width="1.6" stroke-opacity=".7"/>
+
+        <!-- neck -->
+        <path d="M138 208 h24 v20 q-12 8 -24 0 Z" fill="var(--vp-skin-sh)"/>
+
+        <g id="vp-head">
+          <path d="M150 58 C112 58 90 88 95 130 C96 144 101 154 106 161 C105 138 108 120 114 111 C113 90 129 79 150 79 C171 79 187 90 186 111 C192 120 196 134 194 158 C200 148 200 126 195 115 C199 86 177 58 150 58 Z" fill="var(--vp-hair)"/>
+          <path d="M150 78c34 0 56 26 56 62 0 40-26 66-56 66s-56-26-56-66c0-36 22-62 56-62Z" fill="var(--vp-skin)"/>
+          <circle cx="95" cy="150" r="9" fill="var(--vp-skin)"/><circle cx="205" cy="150" r="9" fill="var(--vp-skin)"/>
+          <g clip-path="url(#vpFaceClip)"><path d="M94 176 q56 34 112 0 v40 h-112 Z" fill="var(--vp-skin-sh)" opacity=".35"/></g>
+
+          <g id="vp-brows" stroke="var(--vp-hair)" stroke-width="4.5" stroke-linecap="round">
+            <path d="M116 132 q13 -7 26 -1"/><path d="M158 131 q13 -6 26 1"/>
+          </g>
+
+          <g id="vp-eyes">
+            <ellipse cx="129" cy="148" rx="13" ry="10.5" fill="#fff"/>
+            <ellipse cx="171" cy="148" rx="13" ry="10.5" fill="#fff"/>
+            <g class="vp-pupil">
+              <circle cx="129" cy="148" r="6.4" fill="#243b46"/><circle cx="171" cy="148" r="6.4" fill="#243b46"/>
+              <circle cx="131" cy="146" r="1.9" fill="#fff"/><circle cx="173" cy="146" r="1.9" fill="#fff"/>
+            </g>
+            <rect class="vp-lid" x="116" y="137.5" width="26" height="21" rx="10" fill="var(--vp-skin)"/>
+            <rect class="vp-lid" x="158" y="137.5" width="26" height="21" rx="10" fill="var(--vp-skin)"/>
+          </g>
+
+          <g fill="none">
+            <g stroke="var(--vp-glass)" stroke-width="3.4">
+              <rect x="111" y="137" width="35" height="24" rx="6"/><rect x="154" y="137" width="35" height="24" rx="6"/>
+              <path d="M146 147 h8"/><path d="M111 145 l-13 -3"/><path d="M189 145 l13 -3"/>
+            </g>
+            <g stroke="var(--vp-cyan)" stroke-width="1.4" stroke-opacity=".85"><path d="M114 139 h29"/><path d="M157 139 h29"/></g>
+          </g>
+
+          <path d="M150 158 q-4 8 0 13" fill="none" stroke="var(--vp-skin-sh)" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M138 184 q12 8 24 0" fill="none" stroke="#a9584f" stroke-width="3" stroke-linecap="round"/>
+
+          <g clip-path="url(#vpFaceClip)"><path d="M108 178 q42 30 84 0 v34 h-84 Z" fill="var(--vp-hair)" opacity=".12"/></g>
+
+          <path d="M98 116 C98 86 120 62 152 62 C182 62 202 84 200 112 C195 100 187 96 180 99 C175 90 165 89 160 96 C150 84 120 86 104 104 C101 108 99 112 98 116 Z" fill="var(--vp-hair)"/>
+          <path d="M162 66 C150 80 132 90 110 104" stroke="var(--vp-surface-2)" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".5"/>
+          <g stroke="var(--vp-hair-hi)" stroke-width="2" fill="none" stroke-linecap="round" opacity=".85">
+            <path d="M156 70 C144 84 126 92 108 106"/><path d="M170 78 C160 90 146 98 130 106"/>
+          </g>
+        </g>
+
+        <!-- ARM holding a micropipette (drawn last => in front of chest) -->
+        <g id="vp-arm">
+          <!-- coat sleeve / forearm -->
+          <path d="M176 262 C166 276 170 300 196 300 L214 300 C214 280 206 266 197 261 C190 257 182 257 176 262 Z" fill="var(--vp-coat)"/>
+          <path d="M197 261 C206 266 214 280 214 300" fill="none" stroke="var(--vp-coat-sh)" stroke-width="1.4" stroke-opacity=".6"/>
+          <!-- pipette -->
+          <g>
+            <rect id="vp-plunger" x="182" y="226" width="8" height="9" rx="2" fill="var(--vp-cyan)"/>
+            <rect x="184.5" y="234" width="3" height="7" fill="var(--vp-tool-sh)"/>
+            <rect x="180" y="240" width="12" height="7" rx="2.5" fill="var(--vp-tool)" stroke="var(--vp-tool-sh)" stroke-width="1"/>
+            <rect x="180.5" y="246" width="11" height="22" rx="3.5" fill="var(--vp-tool)" stroke="var(--vp-tool-sh)" stroke-width="1"/>
+            <rect x="180.5" y="250" width="11" height="5" fill="var(--vp-cyan)" opacity=".9"/>
+            <rect x="184" y="258" width="4" height="6" rx="1" fill="var(--vp-tool-sh)"/>
+            <path d="M181 267 L191 267 L188.5 279 L183.5 279 Z" fill="var(--vp-tool)" stroke="var(--vp-tool-sh)" stroke-width="1"/>
+            <path d="M184 279 L188 279 L186.8 291 L185.2 291 Z" fill="var(--vp-tool-sh)"/>
+            <!-- dispensed droplet -->
+            <ellipse id="vp-drop" cx="186" cy="292" rx="2.4" ry="3.2" fill="var(--vp-cyan)"/>
+          </g>
+          <!-- hand gripping the pipette -->
+          <ellipse cx="181" cy="248" rx="3" ry="4.6" fill="var(--vp-skin)"/>
+          <ellipse cx="186" cy="260" rx="9" ry="6.6" fill="var(--vp-skin)"/>
+          <g stroke="var(--vp-skin-sh)" stroke-width="1.2" stroke-linecap="round" opacity=".7">
+            <path d="M180 257 h12"/><path d="M180 261 h12"/><path d="M181 265 h10"/>
+          </g>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+</div>
+<script>
+(function(){
+  const widget = document.getElementById('vpWidget');
+  if(!widget) return;
+  const stage  = document.getElementById('vpStage');
+  const figure = document.getElementById('vp-figure');
+  const head   = document.getElementById('vp-head');
+  const pupils = widget.querySelectorAll('.vp-pupil');
+  const reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const clamp  = v => Math.max(-1, Math.min(1, v));
+
+  /* idle breathing */
+  if(!reduce){ let t=0; (function b(){ t+=0.03;
+    figure.style.setProperty('--_bob',(Math.sin(t)*2.4).toFixed(2)+'px');
+    requestAnimationFrame(b); })(); }
+
+  /* blink */
+  function blink(){ widget.classList.add('is-blinking');
+    setTimeout(()=>widget.classList.remove('is-blinking'),110);
+    setTimeout(blink, 2200+Math.random()*3200); }
+  if(!reduce) setTimeout(blink,1200);
+
+  /* gaze: pupils + slight head tilt follow the cursor */
+  document.addEventListener('mousemove',(e)=>{ if(reduce) return;
+    const r=stage.getBoundingClientRect();
+    const cx=r.left+r.width/2, cy=r.top+r.height*0.45;
+    const dx=clamp((e.clientX-cx)/(r.width/2)), dy=clamp((e.clientY-cy)/(r.height/2));
+    pupils.forEach(p=> p.style.transform=`translate(${(dx*3.2).toFixed(2)}px,${(dy*2.6).toFixed(2)}px)`);
+    head.style.setProperty('--_tilt',(dx*2.2).toFixed(2)+'deg');
+  });
+  stage.addEventListener('mouseenter',()=>widget.classList.add('is-hover'));
+  stage.addEventListener('mouseleave',()=>widget.classList.remove('is-hover'));
+
+  /* click -> pipetting action (silent) */
+  let busy=false;
+  function pipette(){
+    widget.classList.add('is-touched');
+    if(busy) return; busy=true;
+    widget.classList.add('is-pipetting');
+    const done=()=>{ widget.classList.remove('is-pipetting'); busy=false; };
+    if(reduce){ done(); return; }
+    setTimeout(done, 2650);   // 3 cycles x ~0.85s
+  }
+  stage.addEventListener('click', pipette);
+  stage.addEventListener('keydown',(e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); pipette(); } });
+})();
+</script>
+<!-- V-PERSONA floating widget: end -->
 </body>
 </html>
