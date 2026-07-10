@@ -1315,11 +1315,12 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
 /* fixed placement: always bottom-right; only the avatar catches clicks (rest passes through) */
 #vpWidget{ position:fixed; right:16px; bottom:14px; width:clamp(112px,14vw,150px);
   z-index:1200; pointer-events:none; }
-#vpWidget .vp-stage{ pointer-events:auto; filter:drop-shadow(0 8px 18px rgba(0,0,0,.26)); }
+#vpWidget .vp-stage{ pointer-events:auto; cursor:grab; -webkit-user-select:none; user-select:none; touch-action:none; filter:drop-shadow(0 8px 18px rgba(0,0,0,.26)); }
+#vpWidget.is-dragging, #vpWidget.is-dragging .vp-stage{ cursor:grabbing; }
 #vpWidget .vp-close{ position:absolute; top:2px; right:2px; width:22px; height:22px; padding:0; border:none; border-radius:50%;
-  background:rgba(20,26,34,.5); color:#fff; font-size:16px; line-height:1; cursor:pointer; pointer-events:auto; z-index:3;
+  background:rgba(20,26,34,.5); color:#fff; font-size:16px; line-height:1; cursor:pointer; pointer-events:none; z-index:3;
   display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .18s ease, background .18s ease; }
-#vpWidget:hover .vp-close, #vpWidget .vp-close:focus-visible{ opacity:1; }
+#vpWidget:hover .vp-close, #vpWidget .vp-close:focus-visible{ opacity:1; pointer-events:auto; }
 #vpWidget .vp-close:hover{ background:rgba(20,26,34,.82); }
 /* click-to-toggle speech bubble (hidden until .is-speaking); dark palette to match the persona */
 #vpBubble{ position:absolute; right:44px; bottom:88%; margin-bottom:0; width:max-content; max-width:216px;
@@ -1331,7 +1332,7 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
 #vpBubble::after{ content:""; position:absolute; right:28px; bottom:-6px; width:12px; height:12px;
   background:var(--vp-surface); border-right:1px solid var(--vp-line); border-bottom:1px solid var(--vp-line); transform:rotate(45deg); }
 #vpWidget.is-speaking #vpBubble{ opacity:1; visibility:visible; transform:translateY(0) scale(1); pointer-events:auto; }
-@media (max-width:600px){ #vpWidget{ width:96px; right:10px; bottom:10px; } #vpBubble{ right:14px; } #vpWidget .vp-close{ opacity:.85; } }
+@media (max-width:600px){ #vpWidget{ width:96px; right:10px; bottom:10px; } #vpBubble{ right:14px; } #vpWidget .vp-close{ opacity:.85; pointer-events:auto; } }
 /* ============ end V-Persona widget CSS ============ */
 
 
@@ -2335,19 +2336,21 @@ em, i { font-style: normal; }  /* site-wide: no italics */
   stage.addEventListener('mouseenter',()=>widget.classList.add('is-hover'));
   stage.addEventListener('mouseleave',()=>widget.classList.remove('is-hover'));
 
-  /* click -> pipetting action (silent) */
-  let busy=false, actTick=0;
-  function pipette(){
+  /* ACTION cycle (independent of the dialogue): 1st click = pipette drip, 2nd = tube smoke, then alternate.
+     Every click advances the counter and re-triggers the animation even mid-animation, so the 2nd click always smokes. */
+  let actTick=0, actTimer=null;
+  function doAction(){
     widget.classList.add('is-touched');
-    if(busy) return; busy=true;
-    var cls = (actTick % 2 === 1) ? 'is-smoking' : 'is-pipetting';  // 1st: pipette drips, 2nd: tube smokes, then alternate
+    var smoking = (actTick % 2 === 1);
     actTick++;
+    widget.classList.remove('is-pipetting','is-smoking');
+    if(actTimer){ clearTimeout(actTimer); actTimer=null; }
+    if(reduce) return;
+    void widget.offsetWidth;                 // force reflow so the animation restarts on every click
+    var cls = smoking ? 'is-smoking' : 'is-pipetting';
     widget.classList.add(cls);
-    const done=()=>{ widget.classList.remove(cls); busy=false; };
-    if(reduce){ done(); return; }
-    setTimeout(done, 2650);
+    actTimer=setTimeout(function(){ widget.classList.remove(cls); actTimer=null; }, 2650);
   }
-  function speak(){ widget.classList.toggle('is-speaking'); }
 
   /* Entry greeting shows briefly then reverts to the self-intro; the intro is what shows on click. */
   const bubble = document.getElementById('vpBubble');
@@ -2366,11 +2369,31 @@ em, i { font-style: normal; }  /* site-wide: no italics */
     greetTimer=setTimeout(function(){ greetTimer=null; hideBubble(); }, 10000);
   }, 600);
 
-  function onActivate(){ var greeting=(greetTimer!==null); cancelGreet(); pipette();
-    if(greeting){ showIntro(); }                                        // greeting up -> switch to intro
-    else if(widget.classList.contains('is-speaking')){ hideBubble(); }  // intro up -> hide
-    else { showIntro(); } }                                             // nothing up -> show intro
-  stage.addEventListener('click', onActivate);
+  /* A click fires two INDEPENDENT responses: the action cycle (doAction) and the dialogue (showIntro, 10s auto-hide).
+     The dialogue no longer toggles off on click, so it never interferes with the 2nd-click smoke. */
+  function onActivate(){ cancelGreet(); doAction(); showIntro(); }
+
+  /* DRAGGABLE: move the avatar with the mouse (or touch). A press that moves >4px is a drag (no action fired);
+     a press that does not move is a click (fires onActivate). Position is per-session (resets on reload). */
+  var drag={active:false,moved:false,sx:0,sy:0,ox:0,oy:0};
+  function dragStart(px,py){ drag.active=true; drag.moved=false; drag.sx=px; drag.sy=py; var r=widget.getBoundingClientRect(); drag.ox=r.left; drag.oy=r.top; }
+  function dragMove(px,py){
+    if(!drag.active) return;
+    var dx=px-drag.sx, dy=py-drag.sy;
+    if(!drag.moved){ if((Math.abs(dx)+Math.abs(dy))<=4) return; drag.moved=true; widget.classList.add('is-dragging');
+      widget.style.left=drag.ox+'px'; widget.style.top=drag.oy+'px'; widget.style.right='auto'; widget.style.bottom='auto'; }
+    var r=widget.getBoundingClientRect();
+    var nx=Math.max(4, Math.min(window.innerWidth-r.width-4, drag.ox+dx));
+    var ny=Math.max(4, Math.min(window.innerHeight-r.height-4, drag.oy+dy));
+    widget.style.left=nx+'px'; widget.style.top=ny+'px';
+  }
+  function dragEnd(){ var m=drag.moved; drag.active=false; widget.classList.remove('is-dragging'); return m; }
+  stage.addEventListener('mousedown',function(e){ if(e.button!==0) return; e.preventDefault(); dragStart(e.clientX,e.clientY); });
+  document.addEventListener('mousemove',function(e){ if(drag.active) dragMove(e.clientX,e.clientY); });
+  document.addEventListener('mouseup',function(){ if(!drag.active) return; if(!dragEnd()) onActivate(); });
+  stage.addEventListener('touchstart',function(e){ var t=e.touches[0]; dragStart(t.clientX,t.clientY); },{passive:true});
+  stage.addEventListener('touchmove',function(e){ if(!drag.active) return; var t=e.touches[0]; dragMove(t.clientX,t.clientY); if(drag.moved) e.preventDefault(); },{passive:false});
+  stage.addEventListener('touchend',function(){ if(!drag.active) return; if(!dragEnd()) onActivate(); });
   stage.addEventListener('keydown',(e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); onActivate(); } });
   document.addEventListener('click',(e)=>{ if(!e.target.closest('#vpWidget') && widget.classList.contains('is-speaking')){ cancelGreet(); hideBubble(); } });
   document.addEventListener('keydown',(e)=>{ if(e.key==='Escape' && widget.classList.contains('is-speaking')){ cancelGreet(); hideBubble(); } });
