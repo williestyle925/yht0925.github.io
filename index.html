@@ -11,6 +11,11 @@
 <link rel="alternate" hreflang="x-default" href="https://www.yuhsiangteng.com/">
 <meta name="author" content="Yu-Hsiang Teng">
 <meta name="theme-color" content="#1a2128">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <!-- Open Graph -->
 <meta property="og:type" content="profile">
 <meta property="og:site_name" content="Yu-Hsiang Teng, PhD">
@@ -1013,15 +1018,12 @@ html[data-theme="light"] .premise-ref a{ color:#767d85; }
 .cover-visual img{ position:relative; z-index:1; width:100%; max-width:480px; mix-blend-mode:screen; filter:saturate(1.1) contrast(1.05); }
 .cover-cap{ position:absolute; bottom:-2.9rem; left:50%; transform:translateX(-50%); width:max-content; max-width:92%; font-family:var(--mono); font-size:0.56rem; letter-spacing:0.06em; color:#6b7681; text-align:center; }
 /* light-mode cover: follow the theme (light bg, dark text) */
-html[data-theme="light"] .cover{ --teal:#2f8a7e; background:radial-gradient(120% 130% at 74% 34%, #edece8 0%, #e4e3dd 55%, #d7d6d0 100%); border-bottom:1px solid var(--line); }
+html[data-theme="light"] .cover{ --accent:#2f7d4f; --accent-soft:#3f9a63; --teal:#2f8a7e; background:radial-gradient(120% 130% at 74% 34%, #edece8 0%, #e4e3dd 55%, #d7d6d0 100%); border-bottom:1px solid var(--line); }
 html[data-theme="light"] .cover-h1{ color:#1f242b; }
 html[data-theme="light"] .cover-deck{ color:#474d55; }
 html[data-theme="light"] .cover-goals-label{ color:#767d85; }
 html[data-theme="light"] .cover-goals li{ color:#3b4148; }
-html[data-theme="light"] .cover-eyebrow{ color:var(--teal); }
-html[data-theme="light"] .cover-h1 em{ color:var(--teal); }
-html[data-theme="light"] .cover-goals li::before{ color:var(--teal); }
-html[data-theme="light"] .cover-link{ color:#b15233; border-bottom-color:rgba(177,82,51,0.45); }
+html[data-theme="light"] .cover-link{ color:var(--accent-soft); border-bottom-color:rgba(47,125,79,0.4); }
 html[data-theme="light"] .cover-link:hover{ color:#1f242b; border-color:#1f242b; }
 html[data-theme="light"] .cover-cap{ color:#8a8f96; }
 html[data-theme="light"] .cover-visual::before{ display:none; }
@@ -1309,6 +1311,11 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
 #vpWidget{ position:fixed; right:16px; bottom:14px; width:clamp(112px,14vw,150px);
   z-index:1200; pointer-events:none; }
 #vpWidget .vp-stage{ pointer-events:auto; filter:drop-shadow(0 8px 18px rgba(0,0,0,.26)); }
+#vpWidget .vp-close{ position:absolute; top:2px; right:2px; width:22px; height:22px; padding:0; border:none; border-radius:50%;
+  background:rgba(20,26,34,.5); color:#fff; font-size:16px; line-height:1; cursor:pointer; pointer-events:auto; z-index:3;
+  display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .18s ease, background .18s ease; }
+#vpWidget:hover .vp-close, #vpWidget .vp-close:focus-visible{ opacity:1; }
+#vpWidget .vp-close:hover{ background:rgba(20,26,34,.82); }
 /* click-to-toggle speech bubble (hidden until .is-speaking); dark palette to match the persona */
 #vpBubble{ position:absolute; right:44px; bottom:88%; margin-bottom:0; width:max-content; max-width:216px;
   background:var(--vp-surface); color:var(--vp-text); border:1px solid var(--vp-line); border-radius:13px;
@@ -1319,7 +1326,7 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
 #vpBubble::after{ content:""; position:absolute; right:28px; bottom:-6px; width:12px; height:12px;
   background:var(--vp-surface); border-right:1px solid var(--vp-line); border-bottom:1px solid var(--vp-line); transform:rotate(45deg); }
 #vpWidget.is-speaking #vpBubble{ opacity:1; visibility:visible; transform:translateY(0) scale(1); pointer-events:auto; }
-@media (max-width:600px){ #vpWidget{ width:96px; right:10px; bottom:10px; } #vpBubble{ right:14px; } }
+@media (max-width:600px){ #vpWidget{ width:96px; right:10px; bottom:10px; } #vpBubble{ right:14px; } #vpWidget .vp-close{ opacity:.85; } }
 /* ============ end V-Persona widget CSS ============ */
 
 
@@ -2165,6 +2172,7 @@ em, i { font-style: normal; }  /* site-wide: no italics */
 
 <!-- V-PERSONA floating widget: begin -->
 <div class="vp-widget" id="vpWidget" aria-label="Virtual persona of YuHsiang Teng">
+  <button class="vp-close" id="vpClose" type="button" aria-label="Close / 關閉" title="關閉">&times;</button>
   <div class="vp-bubble" id="vpBubble" data-i18n="vp.greet" role="status">I'm Yu-Hsiang, feel free to reach out with any questions!</div>
   <div class="vp-stage" id="vpStage" tabindex="0" role="button" aria-label="Tap to pipette / 點擊打液">
     <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -2266,6 +2274,9 @@ em, i { font-style: normal; }  /* site-wide: no italics */
 (function(){
   const widget = document.getElementById('vpWidget');
   if(!widget) return;
+  try{ if(localStorage.getItem('vp-hidden')==='1'){ widget.style.display='none'; return; } }catch(e){}
+  var vpClose = document.getElementById('vpClose');
+  if(vpClose){ vpClose.addEventListener('click', function(ev){ ev.stopPropagation(); ev.preventDefault(); widget.style.display='none'; try{ localStorage.setItem('vp-hidden','1'); }catch(e){} }); }
   const stage  = document.getElementById('vpStage');
   const figure = document.getElementById('vp-figure');
   const head   = document.getElementById('vp-head');
