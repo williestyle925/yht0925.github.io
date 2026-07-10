@@ -2375,7 +2375,7 @@ em, i { font-style: normal; }  /* site-wide: no italics */
 
   /* DRAGGABLE: move the avatar with the mouse (or touch). A press that moves >4px is a drag (no action fired);
      a press that does not move is a click (fires onActivate). Position is per-session (resets on reload). */
-  var drag={active:false,moved:false,sx:0,sy:0,ox:0,oy:0};
+  var drag={active:false,moved:false,sx:0,sy:0,ox:0,oy:0}, touchGuardUntil=0;
   function dragStart(px,py){ drag.active=true; drag.moved=false; drag.sx=px; drag.sy=py; var r=widget.getBoundingClientRect(); drag.ox=r.left; drag.oy=r.top; }
   function dragMove(px,py){
     if(!drag.active) return;
@@ -2388,12 +2388,12 @@ em, i { font-style: normal; }  /* site-wide: no italics */
     widget.style.left=nx+'px'; widget.style.top=ny+'px';
   }
   function dragEnd(){ var m=drag.moved; drag.active=false; widget.classList.remove('is-dragging'); return m; }
-  stage.addEventListener('mousedown',function(e){ if(e.button!==0) return; e.preventDefault(); dragStart(e.clientX,e.clientY); });
+  stage.addEventListener('mousedown',function(e){ if(Date.now()<touchGuardUntil) return; if(e.button!==0) return; e.preventDefault(); dragStart(e.clientX,e.clientY); });
   document.addEventListener('mousemove',function(e){ if(drag.active) dragMove(e.clientX,e.clientY); });
-  document.addEventListener('mouseup',function(){ if(!drag.active) return; if(!dragEnd()) onActivate(); });
+  document.addEventListener('mouseup',function(){ if(Date.now()<touchGuardUntil) return; if(!drag.active) return; if(!dragEnd()) onActivate(); });
   stage.addEventListener('touchstart',function(e){ var t=e.touches[0]; dragStart(t.clientX,t.clientY); },{passive:true});
   stage.addEventListener('touchmove',function(e){ if(!drag.active) return; var t=e.touches[0]; dragMove(t.clientX,t.clientY); if(drag.moved) e.preventDefault(); },{passive:false});
-  stage.addEventListener('touchend',function(){ if(!drag.active) return; if(!dragEnd()) onActivate(); });
+  stage.addEventListener('touchend',function(){ touchGuardUntil=Date.now()+600; if(!drag.active) return; if(!dragEnd()) onActivate(); });
   stage.addEventListener('keydown',(e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); onActivate(); } });
   document.addEventListener('click',(e)=>{ if(!e.target.closest('#vpWidget') && widget.classList.contains('is-speaking')){ cancelGreet(); hideBubble(); } });
   document.addEventListener('keydown',(e)=>{ if(e.key==='Escape' && widget.classList.contains('is-speaking')){ cancelGreet(); hideBubble(); } });
