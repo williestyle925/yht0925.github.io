@@ -1264,7 +1264,7 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
   --vp-hair:#171c22; --vp-hair-hi:#2f3a45; --vp-glass:#232a31;
   --vp-coat:#f2f6f8; --vp-coat-sh:#cdd9df;
   --vp-tool:#dfe6ea; --vp-tool-sh:#b7c3ca;
-  --vp-glass-fill:rgba(226,236,240,.30); --vp-smoke:#7e8d94;
+  --vp-glass-fill:rgba(226,236,240,.30); --vp-smoke:#6a7983;
 }
 /* V-Persona: intentionally keeps the dark palette in every theme (light override removed) */
 .vp-widget{--_bob:0px;--_tilt:0deg;width:min(320px,82vw);
@@ -1297,8 +1297,8 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
 @keyframes vp-drip{0%,56%{opacity:0;transform:translateY(0)}64%{opacity:1;transform:translateY(1px)}
   100%{opacity:0;transform:translateY(13px) scaleY(1.15)}}
 #vp-smoke .vp-puff{opacity:0;transform-box:fill-box;transform-origin:50% 100%}
-.vp-widget.is-smoking #vp-smoke .vp-puff{animation:vp-smoke 1.5s ease-out infinite}
-@keyframes vp-smoke{0%{opacity:0;transform:translateY(3px) scale(.5)}22%{opacity:.85}100%{opacity:0;transform:translateY(-16px) scale(1.7)}}
+.vp-widget.is-smoking #vp-smoke .vp-puff{animation:vp-smoke 1.7s ease-out infinite}
+@keyframes vp-smoke{0%{opacity:0;transform:translateY(5px) scale(.65)}12%{opacity:.96}52%{opacity:.9}100%{opacity:0;transform:translateY(-27px) scale(2.6)}}
 .vp-hint{margin-top:5px;text-align:center;font-size:10.5px;color:var(--vp-muted);
   letter-spacing:.02em;transition:opacity .4s ease}
 .vp-widget.is-touched .vp-hint{opacity:0}
@@ -2277,9 +2277,10 @@ em, i { font-style: normal; }  /* site-wide: no italics */
           <path d="M197 261 C206 266 214 280 214 300" fill="none" stroke="var(--vp-coat-sh)" stroke-width="1.4" stroke-opacity=".6"/>
           <!-- smoke (hidden until 2nd click) -->
           <g id="vp-smoke">
-            <ellipse class="vp-puff" cx="185" cy="216" rx="3.6" ry="4.2" fill="var(--vp-smoke)"/>
-            <ellipse class="vp-puff" cx="189" cy="215" rx="3.1" ry="3.7" fill="var(--vp-smoke)" style="animation-delay:.5s"/>
-            <ellipse class="vp-puff" cx="183" cy="217" rx="3.3" ry="3.9" fill="var(--vp-smoke)" style="animation-delay:.95s"/>
+            <ellipse class="vp-puff" cx="186" cy="219" rx="6.7" ry="7.3" fill="var(--vp-smoke)"/>
+            <ellipse class="vp-puff" cx="191" cy="217" rx="5.8" ry="6.4" fill="var(--vp-smoke)" style="animation-delay:.3s"/>
+            <ellipse class="vp-puff" cx="181" cy="218" rx="6.1" ry="6.7" fill="var(--vp-smoke)" style="animation-delay:.6s"/>
+            <ellipse class="vp-puff" cx="187" cy="215" rx="5.2" ry="5.8" fill="var(--vp-smoke)" style="animation-delay:.9s"/>
           </g>
           <!-- test tube: glass + pink liquid -->
           <path d="M180.5 222 L180.5 261 Q180.5 270 186 270 Q191.5 270 191.5 261 L191.5 222" fill="var(--vp-glass-fill)" stroke="var(--vp-tool-sh)" stroke-width="1.4" stroke-linejoin="round"/>
