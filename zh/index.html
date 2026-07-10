@@ -1263,6 +1263,7 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
   --vp-hair:#171c22; --vp-hair-hi:#2f3a45; --vp-glass:#232a31;
   --vp-coat:#f2f6f8; --vp-coat-sh:#cdd9df;
   --vp-tool:#dfe6ea; --vp-tool-sh:#b7c3ca;
+  --vp-glass-fill:rgba(226,236,240,.30); --vp-smoke:#7e8d94;
 }
 /* V-Persona: intentionally keeps the dark palette in every theme (light override removed) */
 .vp-widget{--_bob:0px;--_tilt:0deg;width:min(320px,82vw);
@@ -1294,6 +1295,9 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
 .vp-widget.is-pipetting #vp-drop{animation:vp-drip .85s ease-in 3}
 @keyframes vp-drip{0%,56%{opacity:0;transform:translateY(0)}64%{opacity:1;transform:translateY(1px)}
   100%{opacity:0;transform:translateY(13px) scaleY(1.15)}}
+#vp-smoke .vp-puff{opacity:0;transform-box:fill-box;transform-origin:50% 100%}
+.vp-widget.is-smoking #vp-smoke .vp-puff{animation:vp-smoke 1.5s ease-out infinite}
+@keyframes vp-smoke{0%{opacity:0;transform:translateY(3px) scale(.5)}22%{opacity:.85}100%{opacity:0;transform:translateY(-16px) scale(1.7)}}
 .vp-hint{margin-top:5px;text-align:center;font-size:10.5px;color:var(--vp-muted);
   letter-spacing:.02em;transition:opacity .4s ease}
 .vp-widget.is-touched .vp-hint{opacity:0}
@@ -1304,7 +1308,8 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
   #vp-head,#vp-brows,.vp-lid,.vp-pupil{transition:none}
   .vp-widget.is-pipetting #vp-arm,
   .vp-widget.is-pipetting #vp-plunger,
-  .vp-widget.is-pipetting #vp-drop{animation:none}
+  .vp-widget.is-pipetting #vp-drop,
+  .vp-widget.is-smoking #vp-smoke .vp-puff{animation:none}
 }
 /* fixed placement: always bottom-right; only the avatar catches clicks (rest passes through) */
 #vpWidget{ position:fixed; right:16px; bottom:14px; width:clamp(112px,14vw,150px);
@@ -2171,7 +2176,7 @@ em, i { font-style: normal; }  /* site-wide: no italics */
 
 <!-- V-PERSONA floating widget: begin -->
 <div class="vp-widget" id="vpWidget" aria-label="Virtual persona of YuHsiang Teng">
-  <button class="vp-close" id="vpClose" type="button" aria-label="Close / 關閉" title="關閉">&times;</button>
+  <button class="vp-close" id="vpClose" type="button" aria-label="Close / 關閉" title="關閉">×</button>
   <div class="vp-bubble" id="vpBubble" data-i18n="vp.greet" role="status">我是宇翔，有任何問題歡迎聯繫我！</div>
   <div class="vp-stage" id="vpStage" tabindex="0" role="button" aria-label="Tap to pipette / 點擊打液">
     <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -2183,7 +2188,7 @@ em, i { font-style: normal; }  /* site-wide: no italics */
         <clipPath id="vpFaceClip"><path d="M150 78c34 0 56 26 56 62 0 40-26 66-56 66s-56-26-56-66c0-36 22-62 56-62Z"></path></clipPath>
       </defs>
 
-      <g id="vp-figure" style="--_bob: 0.64px;">
+      <g id="vp-figure" style="--_bob: 1.17px;">
         <!-- neck (drawn first: head overlaps its top, coat overlaps its bottom -> no gaps) -->
         <path d="M140 198 L160 198 L160 226 Q150 231 140 226 Z" fill="var(--vp-skin-sh)"></path>
         <!-- white lab coat -->
@@ -2195,8 +2200,6 @@ em, i { font-style: normal; }  /* site-wide: no italics */
         <path d="M150 244 L150 300" stroke="var(--vp-coat-sh)" stroke-width="1.4" stroke-opacity=".55"></path>
         <circle cx="150" cy="280" r="2.1" fill="var(--vp-coat-sh)"></circle>
         <circle cx="150" cy="296" r="2.1" fill="var(--vp-coat-sh)"></circle>
-        <!-- breast pocket -->
-        <rect x="112" y="268" width="26" height="20" rx="2" fill="none" stroke="var(--vp-coat-sh)" stroke-width="1.6" stroke-opacity=".7"></rect>
 
         <g id="vp-head">
           <path d="M150 58 C112 58 90 88 95 130 C96 144 101 154 106 161 C105 138 108 120 114 111 C113 90 129 79 150 79 C171 79 187 90 186 111 C192 120 196 134 194 158 C200 148 200 126 195 115 C199 86 177 58 150 58 Z" fill="var(--vp-hair)"></path>
@@ -2241,6 +2244,7 @@ em, i { font-style: normal; }  /* site-wide: no italics */
 
         <!-- ARM holding a micropipette (drawn last => in front of chest) -->
         <g id="vp-arm">
+         <g transform="translate(300,0) scale(-1,1)">
           <!-- coat sleeve / forearm -->
           <path d="M176 262 C166 276 170 300 196 300 L214 300 C214 280 206 266 197 261 C190 257 182 257 176 262 Z" fill="var(--vp-coat)"></path>
           <path d="M197 261 C206 266 214 280 214 300" fill="none" stroke="var(--vp-coat-sh)" stroke-width="1.4" stroke-opacity=".6"></path>
@@ -2263,6 +2267,31 @@ em, i { font-style: normal; }  /* site-wide: no italics */
           <g stroke="var(--vp-skin-sh)" stroke-width="1.2" stroke-linecap="round" opacity=".7">
             <path d="M180 257 h12"></path><path d="M180 261 h12"></path><path d="M181 265 h10"></path>
           </g>
+         </g>
+        </g>
+
+        <!-- SECOND ARM: character's left hand (viewer's right) holding a test tube of pink liquid -->
+        <g id="vp-arm2">
+          <path d="M176 262 C166 276 170 300 196 300 L214 300 C214 280 206 266 197 261 C190 257 182 257 176 262 Z" fill="var(--vp-coat)"></path>
+          <path d="M197 261 C206 266 214 280 214 300" fill="none" stroke="var(--vp-coat-sh)" stroke-width="1.4" stroke-opacity=".6"></path>
+          <!-- smoke (hidden until 2nd click) -->
+          <g id="vp-smoke">
+            <ellipse class="vp-puff" cx="185" cy="216" rx="3.6" ry="4.2" fill="var(--vp-smoke)"></ellipse>
+            <ellipse class="vp-puff" cx="189" cy="215" rx="3.1" ry="3.7" fill="var(--vp-smoke)" style="animation-delay:.5s"></ellipse>
+            <ellipse class="vp-puff" cx="183" cy="217" rx="3.3" ry="3.9" fill="var(--vp-smoke)" style="animation-delay:.95s"></ellipse>
+          </g>
+          <!-- test tube: glass + pink liquid -->
+          <path d="M180.5 222 L180.5 261 Q180.5 270 186 270 Q191.5 270 191.5 261 L191.5 222" fill="var(--vp-glass-fill)" stroke="var(--vp-tool-sh)" stroke-width="1.4" stroke-linejoin="round"></path>
+          <path d="M180.5 240 L180.5 261 Q180.5 270 186 270 Q191.5 270 191.5 261 L191.5 240 Z" fill="var(--vp-magenta)"></path>
+          <ellipse cx="186" cy="240" rx="5.5" ry="1.7" fill="#f79ac6"></ellipse>
+          <ellipse cx="186" cy="222" rx="5.5" ry="1.9" fill="var(--vp-glass-fill)" stroke="var(--vp-tool-sh)" stroke-width="1.4"></ellipse>
+          <path d="M182.6 226 L182.6 256" stroke="#fff" stroke-width="1.1" stroke-opacity=".45" stroke-linecap="round"></path>
+          <!-- hand gripping the tube -->
+          <ellipse cx="186" cy="260" rx="9" ry="6.6" fill="var(--vp-skin)"></ellipse>
+          <ellipse cx="191" cy="251" rx="3" ry="4.6" fill="var(--vp-skin)"></ellipse>
+          <g stroke="var(--vp-skin-sh)" stroke-width="1.2" stroke-linecap="round" opacity=".7">
+            <path d="M180 257 h12"></path><path d="M180 261 h12"></path><path d="M181 265 h10"></path>
+          </g>
         </g>
       </g>
     </svg>
@@ -2273,9 +2302,8 @@ em, i { font-style: normal; }  /* site-wide: no italics */
 (function(){
   const widget = document.getElementById('vpWidget');
   if(!widget) return;
-  try{ if(localStorage.getItem('vp-hidden')==='1'){ widget.style.display='none'; return; } }catch(e){}
   var vpClose = document.getElementById('vpClose');
-  if(vpClose){ vpClose.addEventListener('click', function(ev){ ev.stopPropagation(); ev.preventDefault(); widget.style.display='none'; try{ localStorage.setItem('vp-hidden','1'); }catch(e){} }); }
+  if(vpClose){ vpClose.addEventListener('click', function(ev){ ev.stopPropagation(); ev.preventDefault(); widget.style.display='none'; }); }
   const stage  = document.getElementById('vpStage');
   const figure = document.getElementById('vp-figure');
   const head   = document.getElementById('vp-head');
@@ -2306,27 +2334,29 @@ em, i { font-style: normal; }  /* site-wide: no italics */
   stage.addEventListener('mouseleave',()=>widget.classList.remove('is-hover'));
 
   /* click -> pipetting action (silent) */
-  let busy=false;
+  let busy=false, actTick=0;
   function pipette(){
     widget.classList.add('is-touched');
     if(busy) return; busy=true;
-    widget.classList.add('is-pipetting');
-    const done=()=>{ widget.classList.remove('is-pipetting'); busy=false; };
+    var cls = (actTick % 2 === 1) ? 'is-smoking' : 'is-pipetting';  // 1st: pipette drips, 2nd: tube smokes, then alternate
+    actTick++;
+    widget.classList.add(cls);
+    const done=()=>{ widget.classList.remove(cls); busy=false; };
     if(reduce){ done(); return; }
-    setTimeout(done, 2650);   // 3 cycles x ~0.85s
+    setTimeout(done, 2650);
   }
   function speak(){ widget.classList.toggle('is-speaking'); }
 
   /* Entry greeting shows briefly then reverts to the self-intro; the intro is what shows on click. */
   const bubble = document.getElementById('vpBubble');
-  var greetTimer=null, revertTimer=null;
+  var greetTimer=null, revertTimer=null, introTimer=null;
   function isZh(){ return document.documentElement.lang==='zh-Hant'; }
   function greetMsg(){ return isZh() ? '嗨，你好嗎？' : 'Hi, how are you doing?'; }
   function introMsg(){ return isZh() ? '我是宇翔，有任何問題歡迎聯繫我！' : "I'm Yu-Hsiang, feel free to reach out with any questions!"; }
   function cancelGreet(){ if(greetTimer){ clearTimeout(greetTimer); greetTimer=null; } }
   /* hide first; swap text back to the intro only AFTER the 0.2s fade-out, so the next line never flashes */
-  function hideBubble(){ widget.classList.remove('is-speaking'); if(revertTimer) clearTimeout(revertTimer); revertTimer=setTimeout(function(){ bubble.innerHTML=introMsg(); revertTimer=null; }, 320); }
-  function showIntro(){ if(revertTimer){ clearTimeout(revertTimer); revertTimer=null; } bubble.innerHTML=introMsg(); widget.classList.add('is-speaking'); }
+  function hideBubble(){ if(introTimer){ clearTimeout(introTimer); introTimer=null; } widget.classList.remove('is-speaking'); if(revertTimer) clearTimeout(revertTimer); revertTimer=setTimeout(function(){ bubble.innerHTML=introMsg(); revertTimer=null; }, 320); }
+  function showIntro(){ if(revertTimer){ clearTimeout(revertTimer); revertTimer=null; } if(introTimer) clearTimeout(introTimer); bubble.innerHTML=introMsg(); widget.classList.add('is-speaking'); introTimer=setTimeout(function(){ introTimer=null; hideBubble(); }, 10000); }
   setTimeout(function(){
     if(widget.classList.contains('is-speaking')) return;   // visitor already opened it
     bubble.innerHTML = greetMsg();          // brief entry greeting
