@@ -1381,7 +1381,7 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
 @media (max-width:600px){ #vpWidget{ width:96px; right:10px; bottom:10px; } #vpBubble{ right:14px; } #vpWidget .vp-close{ opacity:.85; pointer-events:auto; } }
 /* V-Persona chat panel */
 #vpWidget.is-chatting #vpBubble{ display:none; }
-.vp-chat{ position:absolute; right:0; bottom:calc(100% + 10px); width:min(330px,84vw); display:flex; flex-direction:column; background:var(--paper); border:1px solid var(--line); border-radius:14px; box-shadow:0 14px 36px rgba(0,0,0,.30); opacity:0; visibility:hidden; transform:translateY(8px) scale(.98); transform-origin:bottom right; transition:opacity .18s ease, transform .18s ease, visibility .18s; pointer-events:none; z-index:2; }
+.vp-chat{ position:absolute; right:0; bottom:calc(100% - 24px); width:min(330px,84vw); display:flex; flex-direction:column; background:var(--paper); border:1px solid var(--line); border-radius:14px; box-shadow:0 14px 36px rgba(0,0,0,.30); opacity:0; visibility:hidden; transform:translateY(8px) scale(.98); transform-origin:bottom right; transition:opacity .18s ease, transform .18s ease, visibility .18s; pointer-events:none; z-index:2; }
 #vpWidget.is-chatting .vp-chat{ opacity:1; visibility:visible; transform:none; pointer-events:auto; }
 .vp-chat::after{ content:""; position:absolute; right:66px; bottom:-7px; width:14px; height:14px; background:var(--paper); border-right:1px solid var(--line); border-bottom:1px solid var(--line); transform:rotate(45deg); }
 .vp-chat-log{ max-height:min(70vh,440px); overflow-y:auto; padding:14px 14px 8px; display:flex; flex-direction:column; gap:8px; scrollbar-width:thin; scrollbar-color:var(--line) transparent; }
@@ -1400,7 +1400,7 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
 .vp-ask{ font-size:.78rem; color:color-mix(in srgb,var(--ink) 55%,var(--paper)); padding:2px 2px 0; }
 .vp-yn{ display:flex; gap:7px; }
 .vp-chip-yn{ flex:0 0 auto; width:auto; }
-@media (max-width:600px){ .vp-chat{ width:84vw; } .vp-chat::after{ right:44px; } }
+@media (max-width:600px){ .vp-chat{ width:84vw; bottom:calc(100% - 14px); } .vp-chat::after{ right:44px; } }
 @media (prefers-reduced-motion:reduce){ .vp-chat{ transition:none; } }
 /* ============ end V-Persona widget CSS ============ */
 
@@ -2278,7 +2278,7 @@ em, i { font-style: normal; }  /* site-wide: no italics */
         <clipPath id="vpFaceClip"><path d="M150 78c34 0 56 26 56 62 0 40-26 66-56 66s-56-26-56-66c0-36 22-62 56-62Z"></path></clipPath>
       </defs>
 
-      <g id="vp-figure" style="--_bob: 2.39px;">
+      <g id="vp-figure" style="--_bob: 2.32px;">
         <!-- neck (drawn first: head overlaps its top, coat overlaps its bottom -> no gaps) -->
         <path d="M140 198 L160 198 L160 226 Q150 231 140 226 Z" fill="var(--vp-skin-sh)"></path>
         <!-- white lab coat -->
@@ -2488,7 +2488,7 @@ em, i { font-style: normal; }  /* site-wide: no italics */
 
   /* ---- FAQ: topics -> up to 3 questions -> one answer + helpfulness check. No history. ---- */
   var chatPanel=document.getElementById('vpChat'), chatLog=document.getElementById('vpChatLog');
-  var chatOpen=false, chatView=null, chatStage='topics', chatAns=null;
+  var chatOpen=false, chatView=null, chatStage='topics', chatAns=null, chatTopMode='intro';
   var FAQ=[
     { cat:{en:'Organoids', zh:'類器官'}, items:[
       { q:{en:'What are organoids?', zh:'什麼是類器官？'},
@@ -2522,7 +2522,7 @@ em, i { font-style: normal; }  /* site-wide: no italics */
     ]}
   ];
   var T={ ask:{en:'Did this answer your question?', zh:'這有回答到你的問題嗎？'},
-          yes:{en:'Yes, thanks', zh:'有，謝謝'}, no:{en:'No', zh:'沒有'}, back:{en:'Back', zh:'返回'},
+          yes:{en:'Yes, thanks', zh:'有，謝謝'}, no:{en:'No', zh:'沒有'}, back:{en:'Back', zh:'返回'}, thanks:{en:'Glad I could help! Any other questions?', zh:'很高興能幫上忙！還有什麼問題嗎？'},
           contact:{en:'No problem. Please email me directly at yuhsiangteng925@gmail.com and I will get back to you.',
                    zh:'沒問題，歡迎直接來信 yuhsiangteng925@gmail.com，我會盡快回覆。'} };
   function L(o){ return isZh()?o.zh:o.en; }
@@ -2534,16 +2534,16 @@ em, i { font-style: normal; }  /* site-wide: no italics */
   function render(){ if(!chatLog) return; chatLog.innerHTML='';
     var wrap=document.createElement('div'); wrap.className='vp-chips';
     if(chatStage==='topics'){
-      chatLog.appendChild(bubbleEl('bot', introMsg()));
+      chatLog.appendChild(bubbleEl('bot', chatTopMode==='thanks' ? L(T.thanks) : introMsg()));
       FAQ.forEach(function(g,idx){ wrap.appendChild(chipEl(L(g.cat)+' ›','vp-chip-cat',function(){ chatView=idx; chatStage='questions'; render(); })); });
     } else if(chatStage==='questions'){
       FAQ[chatView].items.forEach(function(item){ wrap.appendChild(chipEl(L(item.q),'',function(){ chatAns=L(item.a); chatStage='answer'; render(); })); });
-      wrap.appendChild(chipEl('‹ '+L(T.back),'vp-chip-back',function(){ chatView=null; chatStage='topics'; render(); }));
+      wrap.appendChild(chipEl('‹ '+L(T.back),'vp-chip-back',function(){ chatTopMode='intro'; chatView=null; chatStage='topics'; render(); }));
     } else if(chatStage==='answer'){
       chatLog.appendChild(bubbleEl('bot', chatAns));
       chatLog.appendChild(askEl(L(T.ask)));
       var yn=document.createElement('div'); yn.className='vp-yn';
-      yn.appendChild(chipEl(L(T.yes),'vp-chip-yn',function(){ chatAns=null; chatStage='questions'; render(); }));
+      yn.appendChild(chipEl(L(T.yes),'vp-chip-yn',function(){ chatTopMode='thanks'; chatView=null; chatAns=null; chatStage='topics'; render(); }));
       yn.appendChild(chipEl(L(T.no),'vp-chip-yn',function(){ chatStage='contact'; render(); }));
       wrap.appendChild(yn);
       wrap.appendChild(chipEl('‹ '+L(T.back),'vp-chip-back',function(){ chatAns=null; chatStage='questions'; render(); }));
@@ -2552,7 +2552,7 @@ em, i { font-style: normal; }  /* site-wide: no italics */
       wrap.appendChild(chipEl('‹ '+L(T.back),'vp-chip-back',function(){ chatAns=null; chatStage='questions'; render(); }));
     }
     chatLog.appendChild(wrap); chatScroll(); }
-  function openChat(){ if(chatOpen||!chatPanel) return; chatOpen=true; cancelGreet(); hideBubble(); widget.classList.add('is-chatting'); chatPanel.setAttribute('aria-hidden','false'); chatView=null; chatStage='topics'; chatAns=null; render(); }
+  function openChat(){ if(chatOpen||!chatPanel) return; chatOpen=true; cancelGreet(); hideBubble(); widget.classList.add('is-chatting'); chatPanel.setAttribute('aria-hidden','false'); chatView=null; chatStage='topics'; chatAns=null; chatTopMode='intro'; render(); }
   function closeChat(){ if(!chatOpen||!chatPanel) return; chatOpen=false; widget.classList.remove('is-chatting'); chatPanel.setAttribute('aria-hidden','true'); }
   function toggleChat(){ chatOpen?closeChat():openChat(); }
   if(chatPanel){ ['mousedown','click','touchstart'].forEach(function(ev){ chatPanel.addEventListener(ev, function(e){ e.stopPropagation(); }, ev==='touchstart'?{passive:true}:false); }); }
