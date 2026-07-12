@@ -1379,6 +1379,29 @@ html[lang="zh-Hant"] body{ letter-spacing:0.01em; }
   background:var(--vp-surface); border-right:1px solid var(--vp-line); border-bottom:1px solid var(--vp-line); transform:rotate(45deg); }
 #vpWidget.is-speaking #vpBubble{ opacity:1; visibility:visible; transform:translateY(0) scale(1); pointer-events:auto; }
 @media (max-width:600px){ #vpWidget{ width:96px; right:10px; bottom:10px; } #vpBubble{ right:14px; } #vpWidget .vp-close{ opacity:.85; pointer-events:auto; } }
+/* V-Persona chat panel */
+#vpWidget.is-chatting #vpBubble{ display:none; }
+.vp-chat{ position:absolute; right:0; bottom:calc(100% + 10px); width:min(330px,84vw); display:flex; flex-direction:column; background:var(--paper); border:1px solid var(--line); border-radius:14px; box-shadow:0 14px 36px rgba(0,0,0,.30); opacity:0; visibility:hidden; transform:translateY(8px) scale(.98); transform-origin:bottom right; transition:opacity .18s ease, transform .18s ease, visibility .18s; pointer-events:none; z-index:2; }
+#vpWidget.is-chatting .vp-chat{ opacity:1; visibility:visible; transform:none; pointer-events:auto; }
+.vp-chat::after{ content:""; position:absolute; right:66px; bottom:-7px; width:14px; height:14px; background:var(--paper); border-right:1px solid var(--line); border-bottom:1px solid var(--line); transform:rotate(45deg); }
+.vp-chat-log{ max-height:min(70vh,440px); overflow-y:auto; padding:14px 14px 8px; display:flex; flex-direction:column; gap:8px; scrollbar-width:thin; scrollbar-color:var(--line) transparent; }
+.vp-chat-log::-webkit-scrollbar{ width:7px; }
+.vp-chat-log::-webkit-scrollbar-thumb{ background:var(--line); border-radius:4px; }
+.vp-msg{ max-width:84%; padding:.5rem .72rem; border-radius:13px; font-size:.85rem; line-height:1.5; white-space:pre-wrap; overflow-wrap:anywhere; }
+.vp-msg.vp-bot{ align-self:flex-start; background:color-mix(in srgb,var(--ink) 5%,var(--paper)); border:1px solid var(--line); color:var(--ink); border-bottom-left-radius:4px; }
+.vp-msg.vp-me{ align-self:flex-end; background:color-mix(in srgb,var(--accent) 14%,var(--paper)); border:1px solid color-mix(in srgb,var(--accent) 34%,transparent); color:var(--ink); border-bottom-right-radius:4px; }
+.vp-chips{ display:flex; flex-direction:column; gap:7px; padding:2px 0 4px; }
+.vp-chip{ appearance:none; -webkit-appearance:none; cursor:pointer; width:100%; text-align:left; font-family:inherit; font-size:.82rem; line-height:1.35; padding:.5rem .7rem; border-radius:11px; border:1px solid color-mix(in srgb,var(--accent) 38%,transparent); background:color-mix(in srgb,var(--accent) 8%,var(--paper)); color:var(--accent); transition:background .15s, color .15s; }
+.vp-chip:hover{ background:var(--accent); color:#fff; }
+.vp-chip:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+.vp-chip-cat{ font-weight:600; }
+.vp-chip-back{ align-self:flex-start; width:auto; font-size:.78rem; color:color-mix(in srgb,var(--ink) 55%,var(--paper)); background:transparent; border-color:var(--line); }
+.vp-chip-back:hover{ background:color-mix(in srgb,var(--ink) 6%,var(--paper)); color:var(--ink); }
+.vp-ask{ font-size:.78rem; color:color-mix(in srgb,var(--ink) 55%,var(--paper)); padding:2px 2px 0; }
+.vp-yn{ display:flex; gap:7px; }
+.vp-chip-yn{ flex:0 0 auto; width:auto; }
+@media (max-width:600px){ .vp-chat{ width:84vw; } .vp-chat::after{ right:44px; } }
+@media (prefers-reduced-motion:reduce){ .vp-chat{ transition:none; } }
 /* ============ end V-Persona widget CSS ============ */
 
 
@@ -2239,10 +2262,13 @@ em, i { font-style: normal; }  /* site-wide: no italics */
 </script>
 
 <!-- V-PERSONA floating widget: begin -->
-<div class="vp-widget is-speaking" id="vpWidget" aria-label="Virtual persona of YuHsiang Teng">
+<div class="vp-widget" id="vpWidget" aria-label="Virtual persona of YuHsiang Teng">
   <button class="vp-close" id="vpClose" type="button" aria-label="Close / 關閉" title="關閉">×</button>
   <div class="vp-bubble" id="vpBubble" data-i18n="vp.greet" role="status">我是宇翔，有任何問題歡迎聯繫我！</div>
-  <div class="vp-stage" id="vpStage" tabindex="0" role="button" aria-label="Tap to pipette / 點擊打液">
+  <div class="vp-chat" id="vpChat" role="dialog" aria-label="FAQ · Yu-Hsiang Teng / 常見問題" aria-hidden="true">
+    <div class="vp-chat-log" id="vpChatLog"></div>
+  </div>
+  <div class="vp-stage" id="vpStage" tabindex="0" role="button" aria-label="Open FAQ / 開啟常見問題">
     <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <defs>
         <radialGradient id="vpGlow" cx="50%" cy="42%" r="60%">
@@ -2252,7 +2278,7 @@ em, i { font-style: normal; }  /* site-wide: no italics */
         <clipPath id="vpFaceClip"><path d="M150 78c34 0 56 26 56 62 0 40-26 66-56 66s-56-26-56-66c0-36 22-62 56-62Z"></path></clipPath>
       </defs>
 
-      <g id="vp-figure" style="--_bob: 2.34px;">
+      <g id="vp-figure" style="--_bob: 2.39px;">
         <!-- neck (drawn first: head overlaps its top, coat overlaps its bottom -> no gaps) -->
         <path d="M140 198 L160 198 L160 226 Q150 231 140 226 Z" fill="var(--vp-skin-sh)"></path>
         <!-- white lab coat -->
@@ -2368,7 +2394,7 @@ em, i { font-style: normal; }  /* site-wide: no italics */
   const widget = document.getElementById('vpWidget');
   if(!widget) return;
   var vpClose = document.getElementById('vpClose');
-  if(vpClose){ vpClose.addEventListener('click', function(ev){ ev.stopPropagation(); ev.preventDefault(); widget.style.display='none'; }); }
+  if(vpClose){ vpClose.addEventListener('click', function(ev){ ev.stopPropagation(); ev.preventDefault(); if(chatOpen){ closeChat(); } else { widget.style.display='none'; } }); }
   const stage  = document.getElementById('vpStage');
   const figure = document.getElementById('vp-figure');
   const head   = document.getElementById('vp-head');
@@ -2425,7 +2451,7 @@ em, i { font-style: normal; }  /* site-wide: no italics */
   function hideBubble(){ if(introTimer){ clearTimeout(introTimer); introTimer=null; } widget.classList.remove('is-speaking'); if(revertTimer) clearTimeout(revertTimer); revertTimer=setTimeout(function(){ bubble.innerHTML=introMsg(); revertTimer=null; }, 320); }
   function showIntro(){ if(revertTimer){ clearTimeout(revertTimer); revertTimer=null; } if(introTimer) clearTimeout(introTimer); bubble.innerHTML=introMsg(); widget.classList.add('is-speaking'); introTimer=setTimeout(function(){ introTimer=null; hideBubble(); }, 10000); }
   setTimeout(function(){
-    if(widget.classList.contains('is-speaking')) return;   // visitor already opened it
+    if(widget.classList.contains('is-speaking') || chatOpen) return;   // visitor already opened it / chat open
     bubble.innerHTML = greetMsg();          // brief entry greeting
     widget.classList.add('is-speaking');
     greetTimer=setTimeout(function(){ greetTimer=null; hideBubble(); }, 10000);
@@ -2433,7 +2459,7 @@ em, i { font-style: normal; }  /* site-wide: no italics */
 
   /* A click fires two INDEPENDENT responses: the action cycle (doAction) and the dialogue (showIntro, 10s auto-hide).
      The dialogue no longer toggles off on click, so it never interferes with the 2nd-click smoke. */
-  function onActivate(){ cancelGreet(); doAction(); showIntro(); }
+  function onActivate(){ cancelGreet(); doAction(); toggleChat(); }
 
   /* DRAGGABLE: move the avatar with the mouse (or touch). A press that moves >4px is a drag (no action fired);
      a press that does not move is a click (fires onActivate). Position is per-session (resets on reload). */
@@ -2457,8 +2483,79 @@ em, i { font-style: normal; }  /* site-wide: no italics */
   stage.addEventListener('touchmove',function(e){ if(!drag.active) return; var t=e.touches[0]; dragMove(t.clientX,t.clientY); if(drag.moved) e.preventDefault(); },{passive:false});
   stage.addEventListener('touchend',function(){ touchGuardUntil=Date.now()+600; if(!drag.active) return; if(!dragEnd()) onActivate(); });
   stage.addEventListener('keydown',(e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); onActivate(); } });
-  document.addEventListener('click',(e)=>{ if(!e.target.closest('#vpWidget') && widget.classList.contains('is-speaking')){ cancelGreet(); hideBubble(); } });
-  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape' && widget.classList.contains('is-speaking')){ cancelGreet(); hideBubble(); } });
+  document.addEventListener('click',(e)=>{ if(!e.target.closest('#vpWidget')){ if(widget.classList.contains('is-speaking')){ cancelGreet(); hideBubble(); } if(chatOpen) closeChat(); } });
+  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape'){ if(widget.classList.contains('is-speaking')){ cancelGreet(); hideBubble(); } if(chatOpen) closeChat(); } });
+
+  /* ---- FAQ: topics -> up to 3 questions -> one answer + helpfulness check. No history. ---- */
+  var chatPanel=document.getElementById('vpChat'), chatLog=document.getElementById('vpChatLog');
+  var chatOpen=false, chatView=null, chatStage='topics', chatAns=null;
+  var FAQ=[
+    { cat:{en:'Organoids', zh:'類器官'}, items:[
+      { q:{en:'What are organoids?', zh:'什麼是類器官？'},
+        a:{en:'Organoids are miniature, self-organizing 3D tissue models grown from stem cells. They reproduce key structures and functions of real organs, so we can study human biology and disease in a dish far more faithfully than with flat cell cultures.',
+           zh:'類器官是由幹細胞培養、能自我組織的微型三維組織模型。它們重現真實器官的關鍵結構與功能，讓我們能在培養皿中，遠比傳統二維細胞培養更真實地研究人體生物學與疾病。'} },
+      { q:{en:'What are iPSC-derived models?', zh:'什麼是 iPSC 衍生的模型？'},
+        a:{en:'Induced pluripotent stem cells (iPSCs) are ordinary adult cells reprogrammed back to a stem-cell-like state, from which almost any human cell type can be made. They let us build human, patient-relevant tissue models without animal-derived material.',
+           zh:'誘導性多能幹細胞（iPSC）是把一般成體細胞重新編程回類似幹細胞狀態的細胞，可分化成幾乎任何人類細胞型別。它們讓我們能在不使用動物來源材料的情況下，建立貼近人體、甚至特定病患的組織模型。'} },
+      { q:{en:'What are blood vessel organoids?', zh:'什麼是血管類器官？'},
+        a:{en:'Blood vessel organoids are 3D vascular networks grown from iPSCs, with the cell types and architecture of real vessels. They are used to model vascular disease and to measure quantitatively how drugs affect blood vessels.',
+           zh:'血管類器官是由 iPSC 培養出的三維血管網路，具備真實血管的細胞型別與結構。它們可用於建立血管疾病模型，並量化評估藥物對血管的影響。'} }
+    ]},
+    { cat:{en:'NAMs', zh:'新方法學'}, items:[
+      { q:{en:'What are New Approach Methodologies (NAMs)?', zh:'什麼是 NAMs（新方法學）？'},
+        a:{en:'NAMs are non-animal test systems (organoids, organ-on-chip, and in-silico models) for assessing the safety and efficacy of drugs and chemicals. The goal is to be more human-relevant, faster, and more ethical than animal testing.',
+           zh:'NAMs（新方法學）是以非動物為基礎的測試系統（類器官、器官晶片與電腦模擬模型），用於評估藥物與化學物質的安全性與有效性。目標是比動物試驗更貼近人體、更快速，也更符合倫理。'} },
+      { q:{en:'Why do NAMs matter now?', zh:'為什麼 NAMs 現在受到重視？'},
+        a:{en:'Animal models often fail to predict human responses, and regulators are increasingly accepting non-animal data. Human-relevant systems like organoids give more predictive readouts, which is why the field is growing quickly in drug discovery and toxicology.',
+           zh:'動物模型時常無法準確預測人體反應，而法規單位也日益接受非動物數據。像類器官這樣貼近人體的系統能提供更具預測力的結果，因此這個領域在新藥開發與毒理學中快速成長。'} },
+      { q:{en:'How are organoids used in drug screening?', zh:'類器官如何用於藥物篩選？'},
+        a:{en:'Organoids can be produced at scale and imaged quantitatively, so we expose them to compounds and measure structural or functional changes, such as how a drug alters vessel length, branching, or diameter, as a human-relevant preclinical readout.',
+           zh:'類器官可規模化生產並進行量化影像分析，因此我們讓它們接觸化合物，測量結構或功能的變化（例如藥物如何改變血管的長度、分支或管徑），作為貼近人體的臨床前指標。'} }
+    ]},
+    { cat:{en:'Methods', zh:'研究方法'}, items:[
+      { q:{en:'How are these models built and analyzed?', zh:'這些模型如何建立與分析？'},
+        a:{en:'The workflow combines stem-cell differentiation, immunostaining with confocal imaging, and quantitative image analysis. The key is reproducible pipelines that turn microscopy images into measurable, comparable morphometric data.',
+           zh:'整個流程結合幹細胞分化、免疫染色與共軛焦顯微影像，以及量化影像分析。關鍵在於建立可重現的分析流程，把顯微影像轉換成可量測、可比較的形態學數據。'} },
+      { q:{en:'What can these models reveal about disease?', zh:'這些模型能揭示疾病的什麼？'},
+        a:{en:'Because organoids reproduce tissue architecture, they let us study disease mechanisms directly in human cells (for instance, how signalling drives cancer-cell invasion, or how vascular cells respond to metabolic stress), linking molecular changes to tissue-level outcomes.',
+           zh:'由於類器官能重現組織結構，我們得以直接在人類細胞中研究疾病機制（例如訊息傳遞如何驅動癌細胞侵襲，或血管細胞如何應對代謝壓力），把分子層次的變化連結到組織層次的結果。'} }
+    ]}
+  ];
+  var T={ ask:{en:'Did this answer your question?', zh:'這有回答到你的問題嗎？'},
+          yes:{en:'Yes, thanks', zh:'有，謝謝'}, no:{en:'No', zh:'沒有'}, back:{en:'Back', zh:'返回'},
+          contact:{en:'No problem. Please email me directly at yuhsiangteng925@gmail.com and I will get back to you.',
+                   zh:'沒問題，歡迎直接來信 yuhsiangteng925@gmail.com，我會盡快回覆。'} };
+  function L(o){ return isZh()?o.zh:o.en; }
+  function chatScroll(){ if(chatLog) chatLog.scrollTop=chatLog.scrollHeight; }
+  function bubbleEl(role,text){ var d=document.createElement('div'); d.className='vp-msg vp-'+role; d.textContent=text; return d; }
+  function askEl(text){ var d=document.createElement('div'); d.className='vp-ask'; d.textContent=text; return d; }
+  function chipEl(label,cls,onClick){ var b=document.createElement('button'); b.type='button'; b.className='vp-chip'+(cls?' '+cls:''); b.textContent=label; b.addEventListener('click',function(e){ e.stopPropagation(); onClick(); }); return b; }
+  /* Stages: topics -> questions -> answer (+ Yes/No) / contact. Each render clears the panel: only one answer at a time. */
+  function render(){ if(!chatLog) return; chatLog.innerHTML='';
+    var wrap=document.createElement('div'); wrap.className='vp-chips';
+    if(chatStage==='topics'){
+      chatLog.appendChild(bubbleEl('bot', introMsg()));
+      FAQ.forEach(function(g,idx){ wrap.appendChild(chipEl(L(g.cat)+' ›','vp-chip-cat',function(){ chatView=idx; chatStage='questions'; render(); })); });
+    } else if(chatStage==='questions'){
+      FAQ[chatView].items.forEach(function(item){ wrap.appendChild(chipEl(L(item.q),'',function(){ chatAns=L(item.a); chatStage='answer'; render(); })); });
+      wrap.appendChild(chipEl('‹ '+L(T.back),'vp-chip-back',function(){ chatView=null; chatStage='topics'; render(); }));
+    } else if(chatStage==='answer'){
+      chatLog.appendChild(bubbleEl('bot', chatAns));
+      chatLog.appendChild(askEl(L(T.ask)));
+      var yn=document.createElement('div'); yn.className='vp-yn';
+      yn.appendChild(chipEl(L(T.yes),'vp-chip-yn',function(){ chatAns=null; chatStage='questions'; render(); }));
+      yn.appendChild(chipEl(L(T.no),'vp-chip-yn',function(){ chatStage='contact'; render(); }));
+      wrap.appendChild(yn);
+      wrap.appendChild(chipEl('‹ '+L(T.back),'vp-chip-back',function(){ chatAns=null; chatStage='questions'; render(); }));
+    } else if(chatStage==='contact'){
+      chatLog.appendChild(bubbleEl('bot', L(T.contact)));
+      wrap.appendChild(chipEl('‹ '+L(T.back),'vp-chip-back',function(){ chatAns=null; chatStage='questions'; render(); }));
+    }
+    chatLog.appendChild(wrap); chatScroll(); }
+  function openChat(){ if(chatOpen||!chatPanel) return; chatOpen=true; cancelGreet(); hideBubble(); widget.classList.add('is-chatting'); chatPanel.setAttribute('aria-hidden','false'); chatView=null; chatStage='topics'; chatAns=null; render(); }
+  function closeChat(){ if(!chatOpen||!chatPanel) return; chatOpen=false; widget.classList.remove('is-chatting'); chatPanel.setAttribute('aria-hidden','true'); }
+  function toggleChat(){ chatOpen?closeChat():openChat(); }
+  if(chatPanel){ ['mousedown','click','touchstart'].forEach(function(ev){ chatPanel.addEventListener(ev, function(e){ e.stopPropagation(); }, ev==='touchstart'?{passive:true}:false); }); }
 })();
 </script>
 <!-- V-PERSONA floating widget: end -->
