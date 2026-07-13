@@ -2025,16 +2025,13 @@ em, i { font-style: normal; }  /* site-wide: no italics */
   </div>
 </section>
 
-
-
-<div class="container" style="border-top:1px solid var(--line);padding-top:3rem;margin-top:1.5rem;">
-  <div class="page-head" id="contact">
-    <div class="eyebrow" data-i18n="con.eyebrow">聯絡</div>
-    <h2 data-i18n="con.h1">一起打造<em>更好的模型</em>。</h2>
+<section id="contact">
+  <div class="container">
+    <div class="section-rule"><span class="section-label" data-i18n="con.eyebrow">聯絡</span></div>
+    <h2 class="contact-lead" data-i18n="con.h1">一起打造<em>更好的模型</em>。</h2>
     <p class="page-deck" data-i18n="con.deck">歡迎在類器官平台開發、臨床前篩選、新方法學（NAMs）與定量影像分析等領域，與學術界、委託研究機構（CRO）及製藥產業合作。</p>
   </div>
-</div>
-
+</section>
 <section>
   <div class="container">
     <div class="contact-grid">
@@ -2197,7 +2194,10 @@ html[lang="zh-Hant"] .tr-part-title{ font-weight:700; }
 @media (max-width:440px){ .tr-market-stats{ grid-template-columns:1fr; } }
 #contact{ scroll-margin-top:96px; }
 #page-about .section-rule{ justify-content:flex-start; }
-#page-about .section-rule::before{ display:none; }
+#page-about .section-rule::before, #page-about .section-rule::after{ display:none; }
+#page-about #contact > .container{ border-top:1px solid var(--line-soft); padding-top:2.6rem; margin-top:1.4rem; }
+#page-about .contact-lead{ font-family:var(--serif); font-weight:500; font-size:1.5rem; line-height:1.32; letter-spacing:-0.01em; color:var(--ink); margin:0.1rem 0 0.7rem; }
+#page-about .contact-lead em{ font-style:normal; color:var(--accent); }
 </style>
 <div class="page" id="page-trend">
 
