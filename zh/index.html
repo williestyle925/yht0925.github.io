@@ -2656,7 +2656,7 @@ html[lang="zh-Hant"] .tr-part-title{ font-weight:700; }
     var th=e.target.closest('#themeToggle');
     if(th){ theme = (theme==='light')?'dark':'light'; try{ localStorage.setItem('site-theme',theme); }catch(e){} applyTheme(theme); return; }
     var t=e.target.closest('#langToggle');
-    if(t){ e.preventDefault(); window.location.href = (document.documentElement.lang==='zh-Hant') ? '/' : '/zh/'; return; }
+    if(t){ e.preventDefault(); var _b = (document.documentElement.lang==='zh-Hant') ? '/' : '/zh/'; window.location.href = _b + (location.hash || ''); return; }
     var a=e.target.closest('a[data-page]');
     if(!a) return;
     e.preventDefault();
