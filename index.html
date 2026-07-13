@@ -2646,7 +2646,7 @@ html[lang="zh-Hant"] .tr-part-title{ font-weight:700; }
 <div class="vp-widget" id="vpWidget" aria-label="Virtual persona of YuHsiang Teng">
   <button class="vp-close" id="vpClose" type="button" aria-label="Close / 關閉" title="關閉">&times;</button>
   <div class="vp-bubble" id="vpBubble" data-i18n="vp.greet" role="status">I'm Yu-Hsiang. Nice to meet you.</div>
-  <div class="vp-stage" id="vpStage" tabindex="0" role="button" aria-label="Contact Yu-Hsiang / 聯絡宇翔">
+  <div class="vp-stage" id="vpStage" tabindex="0" role="button" aria-label="Say hi to Yu-Hsiang / 跟宇翔打招呼">
     <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <defs>
         <radialGradient id="vpGlow" cx="50%" cy="42%" r="60%">
@@ -2838,7 +2838,7 @@ html[lang="zh-Hant"] .tr-part-title{ font-weight:700; }
 
   /* A click fires two INDEPENDENT responses: the action cycle (doAction) and the dialogue (showIntro, 10s auto-hide).
      The dialogue no longer toggles off on click, so it never interferes with the 2nd-click smoke. */
-  function onActivate(){ cancelGreet(); var a=document.getElementById('vpNavLink'); if(!a){ a=document.createElement('a'); a.id='vpNavLink'; a.href='#about'; a.setAttribute('data-page','about'); a.setAttribute('data-anchor','contact'); a.style.display='none'; document.body.appendChild(a); } a.click(); }
+  function onActivate(){ cancelGreet(); doAction(); setExpr(); showIntro(); }
 
   /* DRAGGABLE: move the avatar with the mouse (or touch). A press that moves >4px is a drag (no action fired);
      a press that does not move is a click (fires onActivate). Position is per-session (resets on reload). */
